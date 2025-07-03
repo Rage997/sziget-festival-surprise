@@ -12,14 +12,16 @@ interface ThreeBackgroundProps {
   fireworksIntensity?: 'burst' | 'normal' | 'ambient';
 }
 
-// Simplified animated background
+// Simplified animated background - mobile optimized
 function AnimatedSphere() {
   const ref = useRef<THREE.Points>(null);
   const { positions, colors } = useMemo(() => {
-    const positions = new Float32Array(800 * 3);
-    const colors = new Float32Array(800 * 3);
+    // Reduce particle count for mobile performance
+    const particleCount = window.innerWidth < 768 ? 400 : 800;
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
 
-    for (let i = 0; i < 800; i++) {
+    for (let i = 0; i < particleCount; i++) {
       const radius = Math.random() * 4 + 1;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
@@ -28,7 +30,7 @@ function AnimatedSphere() {
       positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = radius * Math.cos(phi);
 
-      const hue = (i / 800) * 360;
+      const hue = (i / particleCount) * 360;
       const color = new THREE.Color(`hsl(${hue}, 70%, 60%)`);
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
@@ -57,7 +59,7 @@ function AnimatedSphere() {
       <pointsMaterial
         transparent
         vertexColors
-        size={0.02}
+        size={window.innerWidth < 768 ? 0.015 : 0.02}
         sizeAttenuation
         depthWrite={false}
         blending={THREE.AdditiveBlending}
@@ -78,9 +80,11 @@ function FloatingGeometry({ position }: { position: [number, number, number] }) 
     }
   });
 
+  const size = window.innerWidth < 768 ? 0.06 : 0.08;
+
   return (
     <mesh ref={ref} position={position}>
-      <octahedronGeometry args={[0.08]} />
+      <octahedronGeometry args={[size]} />
       <meshStandardMaterial
         color="#FFD700"
         transparent
@@ -95,24 +99,28 @@ function FloatingGeometry({ position }: { position: [number, number, number] }) 
 function Scene({ showFireworks, showBalloons, showCamper, fireworksIntensity }: ThreeBackgroundProps) {
   console.log('Scene rendering with props:', { showFireworks, showBalloons, showCamper, fireworksIntensity });
 
+  // Reduce floating elements on mobile
+  const isMobile = window.innerWidth < 768;
+  const floatingElements = isMobile ? 3 : 6;
+
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.4} />
-      <pointLight position={[10, 10, 10]} intensity={0.8} />
-      <pointLight position={[-10, -10, -10]} intensity={0.3} color="#4ECDC4" />
-      <pointLight position={[0, 10, -10]} intensity={0.3} color="#FF6B6B" />
+      {/* Optimized lighting for mobile */}
+      <ambientLight intensity={isMobile ? 0.3 : 0.4} />
+      <pointLight position={[10, 10, 10]} intensity={isMobile ? 0.6 : 0.8} />
+      <pointLight position={[-10, -10, -10]} intensity={isMobile ? 0.2 : 0.3} color="#4ECDC4" />
+      <pointLight position={[0, 10, -10]} intensity={isMobile ? 0.2 : 0.3} color="#FF6B6B" />
 
       {/* Background animation */}
       <AnimatedSphere />
 
-      {/* Floating decorative elements */}
-      <FloatingGeometry position={[-2, 1, 0]} />
-      <FloatingGeometry position={[2, -1, -1]} />
-      <FloatingGeometry position={[0, 2, -2]} />
-      <FloatingGeometry position={[-1, -2, 1]} />
-      <FloatingGeometry position={[3, 0, 0]} />
-      <FloatingGeometry position={[-3, 1, 2]} />
+      {/* Reduced floating decorative elements for mobile */}
+      {floatingElements >= 1 && <FloatingGeometry position={[-2, 1, 0]} />}
+      {floatingElements >= 2 && <FloatingGeometry position={[2, -1, -1]} />}
+      {floatingElements >= 3 && <FloatingGeometry position={[0, 2, -2]} />}
+      {floatingElements >= 4 && <FloatingGeometry position={[-1, -2, 1]} />}
+      {floatingElements >= 5 && <FloatingGeometry position={[3, 0, 0]} />}
+      {floatingElements >= 6 && <FloatingGeometry position={[-3, 1, 2]} />}
 
       {/* Conditional 3D elements */}
       <ThreeFireworks isActive={showFireworks || false} intensity={fireworksIntensity} />
@@ -130,6 +138,11 @@ export default function ThreeBackground({
 }: ThreeBackgroundProps) {
   console.log('ThreeBackground props:', { showFireworks, showBalloons, showCamper, fireworksIntensity });
 
+  // Mobile-optimized camera settings
+  const isMobile = window.innerWidth < 768;
+  const cameraPosition: [number, number, number] = isMobile ? [0, 0, 10] : [0, 0, 8];
+  const cameraFov = isMobile ? 70 : 60;
+
   return (
     <div 
       className="fixed inset-0" 
@@ -142,18 +155,18 @@ export default function ThreeBackground({
     >
       <Canvas
         camera={{ 
-          position: [0, 0, 8], 
-          fov: 60,
+          position: cameraPosition, 
+          fov: cameraFov,
           near: 0.1,
           far: 1000
         }}
         gl={{ 
-          antialias: true, 
+          antialias: !isMobile, // Disable antialiasing on mobile for performance
           alpha: true, 
-          powerPreference: 'high-performance',
+          powerPreference: isMobile ? 'default' : 'high-performance',
           preserveDrawingBuffer: false
         }}
-        dpr={[1, 2]}
+        dpr={isMobile ? [1, 1.5] : [1, 2]} // Lower DPR on mobile
         style={{ 
           pointerEvents: 'none',
           touchAction: 'none'
@@ -161,9 +174,13 @@ export default function ThreeBackground({
         onCreated={(state) => {
           console.log('Canvas created successfully!', state);
           state.gl.setClearColor('#000000', 0);
-          // Ensure the canvas doesn't capture events
           state.gl.domElement.style.pointerEvents = 'none';
           state.gl.domElement.style.touchAction = 'none';
+          
+          // Mobile-specific optimizations
+          if (isMobile) {
+            state.gl.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+          }
         }}
         onError={(error) => {
           console.error('Canvas error:', error);

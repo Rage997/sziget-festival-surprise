@@ -11,7 +11,8 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
   console.log('ThreeFireworks isActive:', isActive, 'intensity:', intensity);
   
   const pointsRef = useRef<THREE.Points>(null);
-  const particleCount = 3000;
+  // Reduce particle count on mobile for better performance
+  const particleCount = useMemo(() => window.innerWidth < 768 ? 1500 : 3000, []);
   const lastFireworkTime = useRef(0);
   const burstStartTime = useRef(0);
   const isBursting = useRef(false);
@@ -26,7 +27,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
       lifetimes: new Float32Array(particleCount),
       sizes: new Float32Array(particleCount),
     };
-  }, []);
+  }, [particleCount]);
 
   const activeFireworks = useRef<Array<{
     center: THREE.Vector3;
@@ -41,7 +42,16 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
   const createFirework = (center: THREE.Vector3, color: THREE.Color, now: number, type: 'burst' | 'fountain' | 'spiral' | 'ring' | 'willow' | 'chrysanthemum' | 'peony' = 'burst') => {
     console.log('Creating', type, 'firework at:', center);
     const particleStart = Math.floor(Math.random() * (particleCount - 250));
-    const fireworkParticleCount = type === 'fountain' ? 80 : type === 'chrysanthemum' ? 150 : 120 + Math.floor(Math.random() * 80);
+    
+    // Reduce particle count per firework on mobile
+    const isMobile = window.innerWidth < 768;
+    const baseParticleCount = isMobile ? 60 : 120;
+    const fireworkParticleCount = type === 'fountain' ? 
+      (isMobile ? 40 : 80) : 
+      type === 'chrysanthemum' ? 
+        (isMobile ? 75 : 150) : 
+        baseParticleCount + Math.floor(Math.random() * (isMobile ? 40 : 80));
+    
     const maxLifetime = type === 'willow' ? 6 : type === 'fountain' ? 4 : type === 'chrysanthemum' ? 5 : 3.5;
 
     activeFireworks.current.push({
@@ -125,9 +135,14 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
       colors[idx * 3 + 2] = color.b;
 
       lifetimes[idx] = 1.0;
-      sizes[idx] = type === 'willow' ? 0.08 + Math.random() * 0.12 : 
-                   type === 'chrysanthemum' ? 0.06 + Math.random() * 0.08 :
-                   0.1 + Math.random() * 0.1;
+      
+      // Smaller particles on mobile
+      const baseSize = window.innerWidth < 768 ? 0.06 : 0.1;
+      sizes[idx] = type === 'willow' ? 
+        baseSize * 0.8 + Math.random() * baseSize * 1.2 : 
+        type === 'chrysanthemum' ? 
+          baseSize * 0.6 + Math.random() * baseSize * 0.8 :
+          baseSize + Math.random() * baseSize;
     }
   };
 
@@ -152,13 +167,17 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
       const types: Array<'burst' | 'fountain' | 'spiral' | 'ring' | 'willow' | 'chrysanthemum' | 'peony'> = 
         ['burst', 'fountain', 'spiral', 'ring', 'willow', 'chrysanthemum', 'peony'];
 
+      // Reduce initial burst count on mobile
+      const isMobile = window.innerWidth < 768;
+      const initialBurstCount = isMobile ? 6 : 10;
+
       // Initial massive burst
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < initialBurstCount; i++) {
         setTimeout(() => {
           const center = new THREE.Vector3(
-            (Math.random() - 0.5) * 12,
+            (Math.random() - 0.5) * (isMobile ? 8 : 12),
             Math.random() * 5 + 1,
-            (Math.random() - 0.5) * 10
+            (Math.random() - 0.5) * (isMobile ? 6 : 10)
           );
           const color = colors[Math.floor(Math.random() * colors.length)];
           const type = types[Math.floor(Math.random() * types.length)];
@@ -180,9 +199,9 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
         
         if (performance.now() - lastFireworkTime.current > frequency) {
           const center = new THREE.Vector3(
-            (Math.random() - 0.5) * 14,
+            (Math.random() - 0.5) * (isMobile ? 10 : 14),
             Math.random() * 6 + 1,
-            (Math.random() - 0.5) * 12
+            (Math.random() - 0.5) * (isMobile ? 8 : 12)
           );
           const color = colors[Math.floor(Math.random() * colors.length)];
           const type = types[Math.floor(Math.random() * types.length)];
@@ -193,7 +212,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
 
       return () => clearInterval(burstInterval);
     }
-  }, [intensity, isActive]);
+  }, [intensity, isActive, particleCount]);
 
   // CONTINUOUS fireworks that NEVER stop once activated
   useEffect(() => {
@@ -220,14 +239,17 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
     const types: Array<'burst' | 'fountain' | 'spiral' | 'ring' | 'willow' | 'chrysanthemum' | 'peony'> = 
       ['burst', 'fountain', 'spiral', 'ring', 'willow', 'chrysanthemum', 'peony'];
 
+    const isMobile = window.innerWidth < 768;
+
     // Continuous fireworks that never stop!
     continuousInterval.current = setInterval(() => {
       // Only create new fireworks if we're not in burst mode and don't have too many active
-      if (!isBursting.current && activeFireworks.current.length < 4) {
+      const maxActive = isMobile ? 2 : 4;
+      if (!isBursting.current && activeFireworks.current.length < maxActive) {
         const center = new THREE.Vector3(
-          (Math.random() - 0.5) * 14,
+          (Math.random() - 0.5) * (isMobile ? 10 : 14),
           Math.random() * 5 + 1,
-          (Math.random() - 0.5) * 12
+          (Math.random() - 0.5) * (isMobile ? 8 : 12)
         );
         const color = colors[Math.floor(Math.random() * colors.length)];
         const type = types[Math.floor(Math.random() * types.length)];
@@ -242,7 +264,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
         continuousInterval.current = undefined;
       }
     };
-  }, [isActive]);
+  }, [isActive, particleCount]);
 
   useFrame((state, delta) => {
     if (!isActive || !pointsRef.current) return;
@@ -281,7 +303,8 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
         colors[idx * 3 + 1] = fw.color.g * fade * sparkle;
         colors[idx * 3 + 2] = fw.color.b * fade * sparkle;
 
-        sizes[idx] = (0.08 + Math.random() * 0.12) * fade;
+        const baseSize = window.innerWidth < 768 ? 0.06 : 0.08;
+        sizes[idx] = (baseSize + Math.random() * baseSize * 1.5) * fade;
       }
 
       return true;
@@ -299,6 +322,8 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
   }
 
   console.log('Rendering continuous fireworks');
+
+  const pointSize = window.innerWidth < 768 ? 0.12 : 0.15;
 
   return (
     <points
@@ -327,7 +352,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.15}
+        size={pointSize}
         sizeAttenuation
         transparent
         vertexColors

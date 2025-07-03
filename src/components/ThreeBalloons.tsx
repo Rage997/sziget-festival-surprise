@@ -51,14 +51,15 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
     // Reset position at start of each cycle
     if (progress < 0.05 && currentCycle.current !== Math.floor(cycleTime / cycleDuration)) {
       currentCycle.current = Math.floor(cycleTime / cycleDuration);
-      // Randomize starting position for variety
-      position[0] = (Math.random() - 0.5) * 16;
-      position[2] = (Math.random() - 0.5) * 12;
+      // Randomize starting position for variety - adjust for mobile
+      const isMobile = window.innerWidth < 768;
+      position[0] = (Math.random() - 0.5) * (isMobile ? 12 : 16);
+      position[2] = (Math.random() - 0.5) * (isMobile ? 8 : 12);
     }
     
     // Floating motion with gentle wind effects
-    const windX = Math.sin(cycleTime * 0.3 + delay) * 1.2;
-    const windZ = Math.cos(cycleTime * 0.2 + delay) * 0.8;
+    const windX = Math.sin(cycleTime * 0.3 + delay) * (window.innerWidth < 768 ? 0.8 : 1.2);
+    const windZ = Math.cos(cycleTime * 0.2 + delay) * (window.innerWidth < 768 ? 0.5 : 0.8);
     const bobbing = Math.sin(cycleTime * 1.5 + delay) * 0.3;
     
     // Balloon rises continuously
@@ -87,8 +88,8 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
     const fadeStart = 0.85;
     if (progress > fadeStart) {
       const fadeProgress = (progress - fadeStart) / (1 - fadeStart);
-      const opacity = Math.max(0.1, 1 - fadeProgress * 0.7); // Ensure minimum opacity
-      groupRef.current.scale.setScalar(Math.max(0.3, 1 - fadeProgress * 0.3)); // Ensure minimum scale
+      const opacity = Math.max(0.1, 1 - fadeProgress * 0.7);
+      groupRef.current.scale.setScalar(Math.max(0.3, 1 - fadeProgress * 0.3));
       
       // Update material opacity safely
       if (balloonRef.current?.material && 'opacity' in balloonRef.current.material) {
@@ -114,11 +115,10 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
         metalness: 0.1,
         clearcoat: 0.6,
         clearcoatRoughness: 0.1,
-        side: THREE.FrontSide, // Ensure proper rendering
+        side: THREE.FrontSide,
       });
     } catch (error) {
       console.error(`Error creating balloon material for balloon ${id}:`, error);
-      // Fallback material
       return new THREE.MeshStandardMaterial({
         color: '#FF6B6B',
         transparent: true,
@@ -163,8 +163,9 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
     }
   }, [validColor, id]);
 
-  // Ensure valid size
-  const validSize = Math.max(0.1, Math.min(0.5, size)); // Clamp size between 0.1 and 0.5
+  // Ensure valid size - smaller on mobile
+  const isMobile = window.innerWidth < 768;
+  const validSize = Math.max(0.1, Math.min(isMobile ? 0.3 : 0.5, size));
 
   return (
     <group ref={groupRef} position={position}>
@@ -175,7 +176,7 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
         castShadow
         receiveShadow
       >
-        <sphereGeometry args={[validSize, 20, 20]} />
+        <sphereGeometry args={[validSize, isMobile ? 16 : 20, isMobile ? 16 : 20]} />
       </mesh>
       
       {/* Main highlight */}
@@ -210,7 +211,7 @@ function Balloon({ position, color, delay, size, startTime, id }: BalloonProps) 
 
       {/* Subtle glow effect */}
       <mesh position={[0, 0, 0]} scale={1.1}>
-        <sphereGeometry args={[validSize, 16, 16]} />
+        <sphereGeometry args={[validSize, isMobile ? 12 : 16, isMobile ? 12 : 16]} />
         <primitive object={glowMaterial} />
       </mesh>
     </group>
@@ -251,21 +252,25 @@ export default function ThreeBalloons({ isActive }: ThreeBalloonsProps) {
       '#FF00FF', '#ADFF2F', '#FF1493', '#00BFFF', '#FFD700'
     ];
     
+    // Reduce balloon count on mobile for better performance
+    const isMobile = window.innerWidth < 768;
+    const balloonCount = isMobile ? 25 : 40;
+    
     // Create balloons with proper validation
-    for (let i = 0; i < 40; i++) { // Reduced to 40 for better performance
+    for (let i = 0; i < balloonCount; i++) {
       const balloonColor = colors[i % colors.length];
-      const balloonSize = 0.18 + Math.random() * 0.16;
+      const balloonSize = (isMobile ? 0.15 : 0.18) + Math.random() * (isMobile ? 0.12 : 0.16);
       
       // Validate all parameters
       const balloonData_item = {
         position: [
-          Math.max(-8, Math.min(8, (Math.random() - 0.5) * 16)), // Clamp X position
-          Math.max(-6, Math.min(-2, -4 - Math.random() * 2)),    // Clamp Y position  
-          Math.max(-6, Math.min(6, (Math.random() - 0.5) * 12))  // Clamp Z position
+          Math.max(isMobile ? -6 : -8, Math.min(isMobile ? 6 : 8, (Math.random() - 0.5) * (isMobile ? 12 : 16))),
+          Math.max(-6, Math.min(-2, -4 - Math.random() * 2)),
+          Math.max(isMobile ? -4 : -6, Math.min(isMobile ? 4 : 6, (Math.random() - 0.5) * (isMobile ? 8 : 12)))
         ] as [number, number, number],
         color: balloonColor,
         delay: (i * 0.75) % 30, // Every 0.75 seconds, cycling every 30 seconds
-        size: Math.max(0.15, Math.min(0.35, balloonSize)), // Clamp size
+        size: Math.max(isMobile ? 0.12 : 0.15, Math.min(isMobile ? 0.25 : 0.35, balloonSize)),
         id: i,
       };
       

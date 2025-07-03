@@ -31,7 +31,7 @@ function App() {
   console.log('App state:', { isRevealed, showFireworks, showBalloons, fireworksIntensity });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-800 relative overflow-hidden">
       {/* Three.js background - optimized for mobile */}
       <ThreeBackground 
         showFireworks={showFireworks}
@@ -45,10 +45,10 @@ function App() {
         {!isRevealed ? (
           <div className="text-center w-full max-w-lg">
             <div className="mb-8 sm:mb-12">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 tracking-wide leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 tracking-wide leading-tight drop-shadow-2xl">
                 Something Special
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-6 sm:mb-8 px-2">
+              <p className="text-lg sm:text-xl md:text-2xl text-emerald-100 mb-6 sm:mb-8 px-2 drop-shadow-lg">
                 I have a surprise for you... 💕
               </p>
             </div>
@@ -62,15 +62,15 @@ function App() {
         )}
       </div>
       
-      {/* Mobile-optimized decorative elements */}
-      <div className="absolute top-4 sm:top-10 left-4 sm:left-10 w-4 sm:w-6 h-4 sm:h-6 border-2 border-white/20 rounded-full animate-ping z-5"></div>
-      <div className="absolute bottom-16 sm:bottom-20 right-8 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-pink-400/30 rounded-full animate-pulse z-5"></div>
-      <div className="absolute top-1/4 sm:top-1/3 right-4 sm:right-10 w-2 sm:w-3 h-2 sm:h-3 bg-yellow-400/40 rounded-full animate-bounce z-5"></div>
-      <div className="absolute bottom-1/3 left-8 sm:left-20 w-3 sm:w-5 h-3 sm:h-5 border border-blue-400/30 rotate-45 animate-spin z-5"></div>
-      <div className="absolute top-16 sm:top-20 right-1/4 sm:right-1/3 w-3 sm:w-4 h-3 sm:h-4 bg-purple-400/30 rounded-full animate-pulse z-5"></div>
-      <div className="absolute bottom-32 sm:bottom-40 left-1/6 sm:left-1/4 w-2 sm:w-3 h-2 sm:h-3 bg-green-400/40 rounded-full animate-bounce z-5"></div>
-      <div className="absolute top-1/2 left-4 sm:left-10 w-2 h-2 bg-blue-400/50 rounded-full animate-ping z-5"></div>
-      <div className="absolute bottom-1/4 right-1/4 sm:right-1/3 w-3 sm:w-5 h-3 sm:h-5 border border-pink-400/30 rotate-45 animate-spin z-5"></div>
+      {/* Elegant forest-inspired decorative elements */}
+      <div className="absolute top-4 sm:top-10 left-4 sm:left-10 w-4 sm:w-6 h-4 sm:h-6 border-2 border-emerald-300/40 rounded-full animate-ping z-5"></div>
+      <div className="absolute bottom-16 sm:bottom-20 right-8 sm:right-20 w-3 sm:w-4 h-3 sm:h-4 bg-sage-300/50 rounded-full animate-pulse z-5"></div>
+      <div className="absolute top-1/4 sm:top-1/3 right-4 sm:right-10 w-2 sm:w-3 h-2 sm:h-3 bg-teal-300/60 rounded-full animate-bounce z-5"></div>
+      <div className="absolute bottom-1/3 left-8 sm:left-20 w-3 sm:w-5 h-3 sm:h-5 border border-forest-300/40 rotate-45 animate-spin z-5"></div>
+      <div className="absolute top-16 sm:top-20 right-1/4 sm:right-1/3 w-3 sm:w-4 h-3 sm:h-4 bg-mint-300/50 rounded-full animate-pulse z-5"></div>
+      <div className="absolute bottom-32 sm:bottom-40 left-1/6 sm:left-1/4 w-2 sm:w-3 h-2 sm:h-3 bg-jade-300/60 rounded-full animate-bounce z-5"></div>
+      <div className="absolute top-1/2 left-4 sm:left-10 w-2 h-2 bg-emerald-300/60 rounded-full animate-ping z-5"></div>
+      <div className="absolute bottom-1/4 right-1/4 sm:right-1/3 w-3 sm:w-5 h-3 sm:h-5 border border-sage-300/40 rotate-45 animate-spin z-5"></div>
     </div>
   );
 }

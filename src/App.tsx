@@ -57,7 +57,7 @@ function App() {
         ) : (
           <div className="w-full">
             <SurpriseReveal isVisible={isRevealed} />
-            <BudapestMap isVisible={isRevealed} />
+            {/* <BudapestMap isVisible={isRevealed} /> */}
           </div>
         )}
       </div>

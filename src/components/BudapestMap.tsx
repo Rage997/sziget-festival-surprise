@@ -72,21 +72,6 @@ export default function BudapestMap({ isVisible }: BudapestMapProps) {
             </a>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
-          <div className="bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-emerald-300/20 shadow-md">
-            <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base drop-shadow-sm">🌍 Country</h4>
-            <p className="text-emerald-100 text-sm sm:text-base">Hungary</p>
-          </div>
-          <div className="bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-emerald-300/20 shadow-md">
-            <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base drop-shadow-sm">🏙️ City</h4>
-            <p className="text-emerald-100 text-sm sm:text-base">Budapest</p>
-          </div>
-          <div className="bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-emerald-300/20 shadow-md">
-            <h4 className="text-white font-bold mb-1 sm:mb-2 text-sm sm:text-base drop-shadow-sm">🏝️ Location</h4>
-            <p className="text-emerald-100 text-sm sm:text-base">Óbudai-sziget</p>
-          </div>
-        </div>
       </div>
     </motion.div>
   );

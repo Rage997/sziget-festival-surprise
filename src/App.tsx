@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import ThreeBackground from './components/ThreeBackground';
 import SurpriseButton from './components/SurpriseButton';
 import SurpriseReveal from './components/SurpriseReveal';
-import BudapestMap from './components/BudapestMap';
 
 function App() {
   const [isRevealed, setIsRevealed] = useState(false);
@@ -57,7 +56,6 @@ function App() {
         ) : (
           <div className="w-full">
             <SurpriseReveal isVisible={isRevealed} />
-            {/* <BudapestMap isVisible={isRevealed} /> */}
           </div>
         )}
       </div>

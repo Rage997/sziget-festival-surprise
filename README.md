@@ -1,6 +1,7 @@
 # 🎉 Sziget Festival Surprise
 
-A fun interactive surprise to reveal an upcoming trip to Sziget Festival! Features 3D fireworks, floating balloons, and a wandering camper van.
+A fun interactive surprise to reveal an upcoming trip to Sziget Festival! Features 3D fireworks, floating balloons, and a wandering camper van. See it live <a href="https://rage997.github.io/sziget-festival-surprise/">here!</a>
+
 
 ## What it does
 

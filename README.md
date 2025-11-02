@@ -8,7 +8,7 @@ A fun interactive surprise to reveal an upcoming trip to Sziget Festival! Featur
 Click the surprise button to reveal the festival announcement with continuous 3D animations:
 - Fireworks blowing up
 - Balloons floating 
-- A 3D camper van (the exact model I actually own :D) that drives back and forth
+- A 3D camper van (the exact model I actually own :D) that drives back and forth (WIP)
 
 ## Running it locally
 

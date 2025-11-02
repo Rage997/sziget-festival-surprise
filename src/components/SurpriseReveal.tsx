@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import mapImage from '../assets/images/map2.png';
 
 interface SurpriseRevealProps {
   isVisible: boolean;
@@ -64,7 +64,7 @@ export default function SurpriseReveal({ isVisible }: SurpriseRevealProps) {
       className="relative w-full max-w-3xl aspect-[4/3] mx-auto overflow-hidden rounded-3xl border border-emerald-300/30 shadow-2xl"
     >
       <img
-        src="/images/map2.png"
+        src={mapImage}
         alt="Map of the trip"
         className="w-full h-full object-cover rounded-3xl map-fade-mask"
       />

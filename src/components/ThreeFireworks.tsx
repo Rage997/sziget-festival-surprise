@@ -1,5 +1,7 @@
 import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
+import fireworkTexture from '../assets/textures/fireworkTexture.png';
+
 import * as THREE from 'three';
 
 interface ThreeFireworksProps {
@@ -11,7 +13,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
   const pointsRef = useRef<THREE.Points>(null);
   const particleCount = useMemo(() => window.innerWidth < 768 ? 1500 : 3000, []);
   const continuousInterval = useRef<NodeJS.Timeout>();
-  const sparkTexture = useLoader(THREE.TextureLoader, '/textures/fireworkTexture.png');
+  const sparkTexture = useLoader(THREE.TextureLoader, fireworkTexture);
   // const sound = useMemo(() => new Audio('/sounds/firework.mp3'), []); // TODO
 
   const { positions, colors, velocities, lifetimes, sizes } = useMemo(() => {

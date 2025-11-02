@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
+import camperModel from '../assets/models/fiat_ducato_1989.glb';
 import * as THREE from 'three';
 
 interface CamperVanProps {
@@ -8,7 +9,7 @@ interface CamperVanProps {
   modelPath?: string;
 }
 
-export default function CamperVan({ isActive, modelPath = '/models/fiat_ducato_1989.glb' }: CamperVanProps) {
+export default function CamperVan({ isActive, modelPath = camperModel }: CamperVanProps) {
   console.log('CamperVan isActive:', isActive);
   
   const groupRef = useRef<THREE.Group>(null);
@@ -108,4 +109,4 @@ export default function CamperVan({ isActive, modelPath = '/models/fiat_ducato_1
   );
 }
 
-useGLTF.preload('/models/fiat_ducato_1989.glb');
+useGLTF.preload(camperModel);

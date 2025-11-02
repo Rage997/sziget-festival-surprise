@@ -10,12 +10,9 @@ interface ThreeFireworksProps {
 export default function ThreeFireworks({ isActive, intensity = 'normal' }: ThreeFireworksProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const particleCount = useMemo(() => window.innerWidth < 768 ? 1500 : 3000, []);
-  const lastFireworkTime = useRef(0);
-  const burstStartTime = useRef(0);
-  const isBursting = useRef(false);
   const continuousInterval = useRef<NodeJS.Timeout>();
   const sparkTexture = useLoader(THREE.TextureLoader, '/textures/fireworkTexture.png');
-  const sound = useMemo(() => new Audio('/sounds/firework_pop.mp3'), []);
+  // const sound = useMemo(() => new Audio('/sounds/firework.mp3'), []); // TODO
 
   const { positions, colors, velocities, lifetimes, sizes } = useMemo(() => {
     return {
@@ -44,16 +41,16 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
   const createFirework = (center: THREE.Vector3, color: THREE.Color, now: number, type: string = 'burst') => {
     const particleStart = Math.floor(Math.random() * (particleCount - 250));
     const isMobile = window.innerWidth < 768;
-    const baseParticleCount = isMobile ? 60 : 120;
+    const baseParticleCount = isMobile ? 200 : 400;
     const fireworkParticleCount = type === 'fountain' ? 
-      (isMobile ? 40 : 80) : 
+      (isMobile ? 80 : 160) : 
       type === 'chrysanthemum' ? 
-        (isMobile ? 75 : 150) : 
-        baseParticleCount + Math.floor(Math.random() * (isMobile ? 40 : 80));
+        (isMobile ? 100 : 250) : 
+        baseParticleCount + Math.floor(Math.random() * (isMobile ? 80 : 160));
 
     const maxLifetime = type === 'willow' ? 6 : type === 'fountain' ? 4 : type === 'chrysanthemum' ? 5 : 3.5;
 
-    sound.currentTime = 0;
+    // sound.currentTime = 0;
     // sound.play();
 
     activeFireworks.current.push({
@@ -143,7 +140,7 @@ export default function ThreeFireworks({ isActive, intensity = 'normal' }: Three
       const center = new THREE.Vector3((Math.random() - 0.5) * 12, Math.random() * 5 + 1, (Math.random() - 0.5) * 10);
       const type = fireworkTypes[Math.floor(Math.random() * fireworkTypes.length)];
       createFirework(center, color, performance.now(), type);
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(continuousInterval.current);
   }, [isActive]);

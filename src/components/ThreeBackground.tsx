@@ -125,7 +125,7 @@ function Scene({ showFireworks, showBalloons, showCamper, fireworksIntensity }: 
       {/* Conditional 3D elements */}
       <ThreeFireworks isActive={showFireworks || false} intensity={fireworksIntensity} />
       <ThreeBalloons isActive={showBalloons || false} />
-      <CamperVan isActive={showCamper || false} />
+      {/* <CamperVan isActive={showCamper || false} /> */}
     </>
   );
 }

@@ -27,6 +27,18 @@ Open your browser to `http://localhost:5173` and click the surprise button!
 - Tailwind CSS for styling
 - Framer Motion for smooth transitions
 
+## TODOs
+
+I also wanted to include a wandering camper (which is actually the same exact model of camper I own!) but ran out of time. The code is working and the camper is correctly rendered but some work needs to be done on the camper materials for it to look good, so eventually I removed it.
+
+You can show it by uncommenting the line
+
+```
+      {/* <CamperVan isActive={showCamper || false} /> */}
+```
+
+inside `ThreeBackground.tsx`
+
 ## Credits
 
 [Fiat Ducato 3D model](https://sketchfab.com/3d-models/fiat-ducato-1989-b52eea677b32415e893e39c2fcb76163)
